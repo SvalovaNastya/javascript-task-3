@@ -26,7 +26,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     function getIntTimeFromMonday(timeString) {
         var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d)/g;
         var timeGroups = timeRegex.exec(timeString);
-        if (timeGroups[4] !== 0) {
+        if (parseInt(timeGroups[4]) !== 0) {
             bankTimeZone = parseInt(timeGroups[4]);
         }
 
