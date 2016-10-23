@@ -23,6 +23,10 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     var bankTimeZone;
     var currentTimeForRobbery = 0;
 
+    function getEndTimeOfRobbery() {
+        return 3 * MINUTES_IN_DAY + bankTimeZone * MINUTES_IN_HOUR;
+    }
+
     function getIntTimeFromMonday(timeString) {
         var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d)/g;
         var timeGroups = timeRegex.exec(timeString);
@@ -84,9 +88,10 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     prepareTimeIntervals();
 
     function getTimeForRoberry() {
-        var currentTime = 0;
+        var currentTime = bankTimeZone * MINUTES_IN_HOUR;
         var currentInterval = 0;
-        while (currentTime <= 4320 - duration && currentInterval < busyIntervals.length) {
+        while (currentTime <= getEndTimeOfRobbery() - duration &&
+            currentInterval < busyIntervals.length) {
             if (busyIntervals[currentInterval].from - currentTime >= duration) {
                 timeForRobbery.push(currentTime);
                 currentTime += 30;
