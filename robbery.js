@@ -21,7 +21,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     var busyIntervals = [];
     var timeForRobbery = [];
     var bankTimeZone;
-    var currentTimeForRobbery = 1;
+    var currentTimeForRobbery = 0;
 
     function getIntTimeFromMonday(timeString) {
         var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d)/g;
