@@ -24,19 +24,24 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     var currentTimeForRobbery = 0;
 
     function getEndTimeOfRobbery() {
-        return 3 * MINUTES_IN_DAY + bankTimeZone * MINUTES_IN_HOUR;
+        return 3 * MINUTES_IN_DAY - bankTimeZone * MINUTES_IN_HOUR;
     }
 
     function getIntTimeFromMonday(timeString) {
-        var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d)/g;
+        var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d?)/g;
         var timeGroups = timeRegex.exec(timeString);
-        if (parseInt(timeGroups[4]) !== 0) {
-            bankTimeZone = parseInt(timeGroups[4]);
-        }
 
         return WEEKDAYS_MAP.indexOf(timeGroups[1]) * MINUTES_IN_DAY +
             parseInt(timeGroups[2]) * MINUTES_IN_HOUR +
             parseInt(timeGroups[3]) - parseInt(timeGroups[4]) * MINUTES_IN_HOUR;
+    }
+
+    function getBankTimeZone() {
+        var timeZoneRegex = /\+(\d?)/g;
+        var timeZoneGroups = timeZoneRegex.exec(workingHours.from);
+        if (parseInt(timeZoneGroups[1]) !== 0) {
+            bankTimeZone = parseInt(timeZoneGroups[1]);
+        }
     }
 
     function addInterval(interval) {
@@ -58,17 +63,18 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
             }
         }
 
+        getBankTimeZone();
         for (var weekday in WEEKDAYS_MAP) {
             if (WEEKDAYS_MAP.hasOwnProperty(weekday)) {
                 addInterval(
                     {
-                        from: WEEKDAYS_MAP[weekday] + ' 00:00+0',
+                        from: WEEKDAYS_MAP[weekday] + ' 00:00+' + bankTimeZone,
                         to: WEEKDAYS_MAP[weekday] + ' ' + workingHours.from
                     });
                 addInterval(
                     {
                         from: WEEKDAYS_MAP[weekday] + ' ' + workingHours.to,
-                        to: WEEKDAYS_MAP[weekday] + ' 23:00+0'
+                        to: WEEKDAYS_MAP[weekday] + ' 23:00+' + bankTimeZone
                     });
             }
         }
@@ -88,7 +94,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     prepareTimeIntervals();
 
     function getTimeForRoberry() {
-        var currentTime = bankTimeZone * MINUTES_IN_HOUR;
+        var currentTime = - bankTimeZone * MINUTES_IN_HOUR;
         var currentInterval = 0;
         while (currentTime <= getEndTimeOfRobbery() - duration &&
             currentInterval < busyIntervals.length) {
