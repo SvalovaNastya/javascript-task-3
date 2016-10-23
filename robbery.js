@@ -28,7 +28,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     }
 
     function getIntTimeFromMonday(timeString) {
-        var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d?)/g;
+        var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d+)/g;
         var timeGroups = timeRegex.exec(timeString);
 
         return WEEKDAYS_MAP.indexOf(timeGroups[1]) * MINUTES_IN_DAY +
@@ -37,7 +37,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     }
 
     function getBankTimeZone() {
-        var timeZoneRegex = /\+(\d?)/g;
+        var timeZoneRegex = /\+(\d+)/g;
         var timeZoneGroups = timeZoneRegex.exec(workingHours.from);
         bankTimeZone = parseInt(timeZoneGroups[1]);
     }
