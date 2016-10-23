@@ -39,9 +39,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     function getBankTimeZone() {
         var timeZoneRegex = /\+(\d?)/g;
         var timeZoneGroups = timeZoneRegex.exec(workingHours.from);
-        if (parseInt(timeZoneGroups[1]) !== 0) {
-            bankTimeZone = parseInt(timeZoneGroups[1]);
-        }
+        bankTimeZone = parseInt(timeZoneGroups[1]);
     }
 
     function addInterval(interval) {
