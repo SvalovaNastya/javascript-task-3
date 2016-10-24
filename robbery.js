@@ -28,7 +28,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     }
 
     function getIntTimeFromMonday(timeString) {
-        var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d+)/g;
+        var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d+)/;
         var timeGroups = timeRegex.exec(timeString);
 
         return WEEKDAYS_MAP.indexOf(timeGroups[1]) * MINUTES_IN_DAY +
@@ -37,7 +37,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     }
 
     function getBankTimeZone() {
-        var timeZoneRegex = /\+(\d+)/g;
+        var timeZoneRegex = /\+(\d+)/;
         var timeZoneGroups = timeZoneRegex.exec(workingHours.from);
         bankTimeZone = parseInt(timeZoneGroups[1]);
     }
@@ -72,7 +72,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
                 addInterval(
                     {
                         from: WEEKDAYS_MAP[weekday] + ' ' + workingHours.to,
-                        to: WEEKDAYS_MAP[weekday] + ' 23:00+' + bankTimeZone
+                        to: WEEKDAYS_MAP[weekday] + ' 23:59+' + bankTimeZone
                     });
             }
         }
@@ -123,9 +123,9 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
         var hours = Math.floor(time / MINUTES_IN_HOUR);
         time -= hours * MINUTES_IN_HOUR;
         var minutes = time;
-        var formatString = template.replace('%HH', toTwoFormatString(hours.toString()));
-        formatString = formatString.replace('%MM', toTwoFormatString(minutes.toString()));
-        formatString = formatString.replace('%DD', WEEKDAYS_MAP[weekday]);
+        var formatString = template.replace('%HH', toTwoFormatString(hours.toString()))
+            .replace('%MM', toTwoFormatString(minutes.toString()))
+            .replace('%DD', WEEKDAYS_MAP[weekday]);
 
         return formatString;
     }
