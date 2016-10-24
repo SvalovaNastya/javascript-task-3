@@ -62,19 +62,19 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
         }
 
         getBankTimeZone();
-        for (var weekday in WEEKDAYS_MAP) {
-            if (WEEKDAYS_MAP.hasOwnProperty(weekday)) {
-                addInterval(
-                    {
-                        from: WEEKDAYS_MAP[weekday] + ' 00:00+' + bankTimeZone,
-                        to: WEEKDAYS_MAP[weekday] + ' ' + workingHours.from
-                    });
-                addInterval(
-                    {
-                        from: WEEKDAYS_MAP[weekday] + ' ' + workingHours.to,
-                        to: WEEKDAYS_MAP[weekday] + ' 23:59+' + bankTimeZone
-                    });
-            }
+
+        addInterval(
+            {
+                from: WEEKDAYS_MAP[0] + ' 00:00+' + bankTimeZone,
+                to: WEEKDAYS_MAP[0] + ' ' + workingHours.from
+            });
+
+        for (var weekday = 0; weekday < WEEKDAYS_MAP.length - 1; weekday++) {
+            addInterval(
+                {
+                    from: WEEKDAYS_MAP[weekday] + ' ' + workingHours.to,
+                    to: WEEKDAYS_MAP[weekday + 1] + ' ' + workingHours.from
+                });
         }
 
         busyIntervals.sort(function (a, b) {
