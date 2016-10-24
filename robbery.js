@@ -24,7 +24,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     var currentTimeForRobbery = 0;
 
     function getEndTimeOfRobbery() {
-        return 3 * MINUTES_IN_DAY - bankTimeZone * MINUTES_IN_HOUR;
+        return 3 * MINUTES_IN_DAY - bankTimeZone * MINUTES_IN_HOUR - 1;
     }
 
     function getIntTimeFromMonday(timeString) {
