@@ -92,7 +92,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     prepareTimeIntervals();
 
     function getTimeForRoberry() {
-        var currentTime = - bankTimeZone * MINUTES_IN_HOUR + 1;
+        var currentTime = - bankTimeZone * MINUTES_IN_HOUR;
         var currentInterval = 0;
         while (currentTime <= getEndTimeOfRobbery() &&
             currentInterval < busyIntervals.length) {
