@@ -22,6 +22,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     var timeForRobbery = [];
     var bankTimeZone;
     var currentTimeForRobbery = 0;
+    var currentTimeForLater = 0;
 
     function getEndTimeOfRobbery() {
         return 3 * MINUTES_IN_DAY - bankTimeZone * MINUTES_IN_HOUR - 1;
@@ -169,7 +170,8 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          */
         tryLater: function () {
             if (currentTimeForRobbery < timeForRobbery.length - 1) {
-                currentTimeForRobbery++;
+                currentTimeForLater++;
+                currentTimeForRobbery = currentTimeForLater;
 
                 return true;
             }
