@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализовано оба метода и tryLater
  */
-exports.isStar = true;
+exports.isStar = false;
 var MINUTES_IN_DAY = 1440;
 var MINUTES_IN_HOUR = 60;
 var WEEKDAYS_MAP = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
@@ -95,7 +95,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
 
     prepareTimeIntervals();
 
-    function getTimeForRoberry() {
+    function getTimeForRobbery() {
         var currentTime = - bankTimeZone * MINUTES_IN_HOUR;
         var currentInterval = 0;
         while (currentTime <= getEndTimeOfRobbery() &&
@@ -134,7 +134,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
         return formatString;
     }
 
-    getTimeForRoberry();
+    getTimeForRobbery();
 
     return {
 
