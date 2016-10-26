@@ -178,6 +178,8 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          * @returns {Boolean}
          */
         tryLater: function () {
+            if (timeForRobbery.length <= 0)
+                return false;
             if (currentTimeForRobbery < timeForRobbery.length - 1) {
                 currentTimeForLater++;
                 currentTimeForRobbery = currentTimeForLater;
