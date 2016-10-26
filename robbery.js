@@ -138,7 +138,6 @@ function getFormatData(time, template, bankTimeZone) {
 
 exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     var currentTimeForRobbery = 0;
-    var currentTimeForLater = 0;
 
     var bankTimeZone = getBankTimeZone(workingHours);
 
@@ -153,7 +152,6 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          * @returns {Boolean}
          */
         exists: function () {
-            currentTimeForRobbery = 0;
 
             return timeForRobbery.length > 0;
         },
@@ -182,8 +180,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
                 return false;
             }
             if (currentTimeForRobbery < timeForRobbery.length - 1) {
-                currentTimeForLater++;
-                currentTimeForRobbery = currentTimeForLater;
+                currentTimeForRobbery++;
 
                 return true;
             }
