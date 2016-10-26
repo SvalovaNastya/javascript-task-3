@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализовано оба метода и tryLater
  */
-exports.isStar = false;
+exports.isStar = true;
 var MINUTES_IN_DAY = 1440;
 var MINUTES_IN_HOUR = 60;
 var WEEKDAYS_MAP = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
@@ -157,7 +157,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          */
         format: function (template) {
 
-            return timeForRobbery.length > 0
+            return timeForRobbery.length > 0 && template
                 ? getFormatData(timeForRobbery[currentTimeForRobbery], template)
                 : '';
         },
