@@ -52,7 +52,6 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
                     to: timeTo
                 });
         }
-
     }
 
     function prepareTimeIntervals() {
@@ -101,7 +100,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
         var currentInterval = 0;
         while (currentTime <= getEndTimeOfRobbery() &&
             currentInterval < busyIntervals.length) {
-            if (Math.abs(busyIntervals[currentInterval].from - currentTime) >= duration) {
+            if (busyIntervals[currentInterval].from - currentTime >= duration) {
                 timeForRobbery.push(currentTime);
                 currentTime += 30;
             } else {
