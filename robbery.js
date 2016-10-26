@@ -43,11 +43,16 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
     }
 
     function addInterval(interval) {
-        busyIntervals.push(
-            {
-                from: getIntTimeFromMonday(interval.from),
-                to: getIntTimeFromMonday(interval.to)
-            });
+        var timeFrom = getIntTimeFromMonday(interval.from);
+        var timeTo = getIntTimeFromMonday(interval.to);
+        if (timeTo > timeFrom) {
+            busyIntervals.push(
+                {
+                    from: timeFrom,
+                    to: timeTo
+                });
+        }
+
     }
 
     function prepareTimeIntervals() {
@@ -96,7 +101,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
         var currentInterval = 0;
         while (currentTime <= getEndTimeOfRobbery() &&
             currentInterval < busyIntervals.length) {
-            if (busyIntervals[currentInterval].from - currentTime >= duration) {
+            if (Math.abs(busyIntervals[currentInterval].from - currentTime) >= duration) {
                 timeForRobbery.push(currentTime);
                 currentTime += 30;
             } else {
