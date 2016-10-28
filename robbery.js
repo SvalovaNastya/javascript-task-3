@@ -31,16 +31,18 @@ function sortIntervals(a, b) {
     return 0;
 }
 
-function addInterval(interval, busyIntervals) {
+function getInterval(interval) {
     var timeFrom = getIntTimeFromMonday(interval.from);
     var timeTo = getIntTimeFromMonday(interval.to);
-    if (timeTo > timeFrom) {
-        busyIntervals.push(
-            {
-                from: timeFrom,
-                to: timeTo
-            });
-    }
+
+    return { from: timeFrom, to: timeTo };
+}
+
+function getTimeIntervalForBank(weekday, workingHours) {
+    return {
+        from: WEEKDAYS_MAP[weekday] + ' ' + workingHours.to,
+        to: WEEKDAYS_MAP[weekday + 1] + ' ' + workingHours.from
+    };
 }
 
 function getBankTimeZone(workingHours) {
@@ -56,23 +58,20 @@ function prepareTimeIntervals(schedule, workingHours, bankTimeZone) {
     Object.keys(schedule).forEach(function (manScheduleKey) {
         var manSchedule = schedule[manScheduleKey];
         for (var i = 0; i < manSchedule.length; i++) {
-            addInterval(manSchedule[i], busyIntervals);
+            busyIntervals.push(getInterval(manSchedule[i]));
         }
     });
 
-    addInterval(
-        {
-            from: WEEKDAYS_MAP[0] + ' 00:00+' + bankTimeZone,
-            to: WEEKDAYS_MAP[0] + ' ' + workingHours.from
-        },
-        busyIntervals);
+    var startIntervalForBank = {
+        from: WEEKDAYS_MAP[0] + ' 00:00+' + bankTimeZone,
+        to: WEEKDAYS_MAP[0] + ' ' + workingHours.from
+    };
+    busyIntervals.push(getInterval(startIntervalForBank, busyIntervals));
 
     for (var weekday = 0; weekday < WEEKDAYS_MAP.length - 1; weekday++) {
-        addInterval(
-            {
-                from: WEEKDAYS_MAP[weekday] + ' ' + workingHours.to,
-                to: WEEKDAYS_MAP[weekday + 1] + ' ' + workingHours.from
-            }, busyIntervals);
+        busyIntervals.push(getInterval(
+            getTimeIntervalForBank(weekday, workingHours), busyIntervals)
+        );
     }
 
     return busyIntervals.sort(sortIntervals);
