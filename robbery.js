@@ -52,6 +52,21 @@ function getBankTimeZone(workingHours) {
     return parseInt(timeZoneGroups[1], 10);
 }
 
+function prepareBankTimeIntervals(bankTimeZone, workingHours) {
+    var bankBusyIntervals = [];
+    var startIntervalForBank = {
+        from: WEEKDAYS_MAP[0] + ' 00:00+' + bankTimeZone,
+        to: WEEKDAYS_MAP[0] + ' ' + workingHours.from
+    };
+    bankBusyIntervals.push(getInterval(startIntervalForBank));
+
+    for (var weekday = 0; weekday < DAYS_FOR_ROBBERY; weekday++) {
+        bankBusyIntervals.push(getInterval(getTimeIntervalForBank(weekday, workingHours)));
+    }
+
+    return bankBusyIntervals;
+}
+
 function prepareTimeIntervals(schedule, workingHours, bankTimeZone) {
     var busyIntervals = [];
 
@@ -62,17 +77,7 @@ function prepareTimeIntervals(schedule, workingHours, bankTimeZone) {
         }
     });
 
-    var startIntervalForBank = {
-        from: WEEKDAYS_MAP[0] + ' 00:00+' + bankTimeZone,
-        to: WEEKDAYS_MAP[0] + ' ' + workingHours.from
-    };
-    busyIntervals.push(getInterval(startIntervalForBank, busyIntervals));
-
-    for (var weekday = 0; weekday < WEEKDAYS_MAP.length - 1; weekday++) {
-        busyIntervals.push(getInterval(
-            getTimeIntervalForBank(weekday, workingHours), busyIntervals)
-        );
-    }
+    busyIntervals = busyIntervals.concat(prepareBankTimeIntervals(bankTimeZone, workingHours));
 
     return busyIntervals.sort(sortIntervals);
 }
@@ -107,20 +112,18 @@ function getTimeForRobbery(bankTimeZone, busyIntervals, duration) {
     return timeForRobbery;
 }
 
-function toTwoFormatString(time) {
-    var formatString = '';
+function toTimePartFormatString(time) {
     if (time < 10) {
-        formatString += '0';
+        return '0' + time;
     }
-    formatString += time.toString();
 
-    return formatString;
+    return time.toString();
 }
 
 function getFormatData(time, template, bankTimeZone) {
     var timeObject = getTimeParts(time, bankTimeZone);
-    var formatString = template.replace('%HH', toTwoFormatString(timeObject.hours.toString()))
-        .replace('%MM', toTwoFormatString(timeObject.minutes.toString()))
+    var formatString = template.replace('%HH', toTimePartFormatString(timeObject.hours))
+        .replace('%MM', toTimePartFormatString(timeObject.minutes))
         .replace('%DD', timeObject.weekday);
 
     return formatString;
@@ -136,7 +139,7 @@ function getFormatData(time, template, bankTimeZone) {
  */
 
 exports.getAppropriateMoment = function (schedule, duration, workingHours) {
-    var currentTimeForRobbery = 0;
+    var currentTimeIndex = 0;
     var bankTimeZone = getBankTimeZone(workingHours);
     var busyIntervals = prepareTimeIntervals(schedule, workingHours, bankTimeZone);
     var timeForRobbery = getTimeForRobbery(bankTimeZone, busyIntervals, duration);
@@ -160,7 +163,7 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          */
         format: function (template) {
             return timeForRobbery.length > 0 && template
-                ? getFormatData(timeForRobbery[currentTimeForRobbery], template, bankTimeZone)
+                ? getFormatData(timeForRobbery[currentTimeIndex], template, bankTimeZone)
                 : '';
         },
 
@@ -170,8 +173,8 @@ exports.getAppropriateMoment = function (schedule, duration, workingHours) {
          * @returns {Boolean}
          */
         tryLater: function () {
-            if (currentTimeForRobbery < timeForRobbery.length - 1) {
-                currentTimeForRobbery++;
+            if (currentTimeIndex < timeForRobbery.length - 1) {
+                currentTimeIndex++;
 
                 return true;
             }
