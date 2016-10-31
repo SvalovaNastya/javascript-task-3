@@ -12,23 +12,12 @@ var DAYS_FOR_ROBBERY = 3;
 var WEEKDAYS_MAP = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
 
 function getIntTimeFromMonday(timeString) {
-    var timeRegex = /([А-Яа-я]{2}) (\d{2}):(\d{2})\+(\d+)/;
+    var timeRegex = /([А-Я]{2}) (\d{2}):(\d{2})\+(\d+)/;
     var timeGroups = timeRegex.exec(timeString);
 
     return WEEKDAYS_MAP.indexOf(timeGroups[1]) * MINUTES_IN_DAY +
         parseInt(timeGroups[2], 10) * MINUTES_IN_HOUR +
         parseInt(timeGroups[3], 10) - parseInt(timeGroups[4], 10) * MINUTES_IN_HOUR;
-}
-
-function sortIntervals(a, b) {
-    if (a.from > b.from) {
-        return 1;
-    }
-    if (a.from < b.from) {
-        return -1;
-    }
-
-    return 0;
 }
 
 function getInterval(interval) {
@@ -79,7 +68,9 @@ function prepareTimeIntervals(schedule, workingHours, bankTimeZone) {
 
     busyIntervals = busyIntervals.concat(prepareBankTimeIntervals(bankTimeZone, workingHours));
 
-    return busyIntervals.sort(sortIntervals);
+    return busyIntervals.sort(function (a, b) {
+        return Math.sign(a.from - b.from);
+    });
 }
 
 function getTimeParts(intTime, bankTimeZone) {
@@ -93,6 +84,7 @@ function getTimeParts(intTime, bankTimeZone) {
 }
 
 function getTimeForRobbery(bankTimeZone, busyIntervals, duration) {
+    var MINIMAL_TIME_BEFORE_NEXT_ROBBERY = 30;
     var timeForRobbery = [];
     var currentTime = - bankTimeZone * MINUTES_IN_HOUR;
     var currentIntervalIndex = 0;
@@ -102,7 +94,7 @@ function getTimeForRobbery(bankTimeZone, busyIntervals, duration) {
         var currentInterval = busyIntervals[currentIntervalIndex];
         if (currentInterval.from - currentTime >= duration) {
             timeForRobbery.push(currentTime);
-            currentTime += 30;
+            currentTime += MINIMAL_TIME_BEFORE_NEXT_ROBBERY;
         } else {
             currentTime = Math.max(currentInterval.to, currentTime);
             currentIntervalIndex++;
